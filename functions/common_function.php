@@ -5,11 +5,12 @@ include_once __DIR__ . '/../includes/connect.php';
 function get_all_products($limit = 0)
 {
   global $con;
-  $sql = "SELECT * FROM products WHERE status='true'";
+  // Nếu muốn random chỉ khi có limit (ví dụ show featured)
   if ($limit > 0) {
-    $sql .= " ORDER BY RAND() LIMIT $limit";
+    $sql = "SELECT * FROM products WHERE status='true' ORDER BY RAND() LIMIT $limit";
   } else {
-    $sql .= " ORDER BY RAND()";
+    // Thứ tự ổn định (mới nhất trước)
+    $sql = "SELECT * FROM products WHERE status='true' ORDER BY product_id DESC";
   }
 
   $res = mysqli_query($con, $sql);
@@ -21,9 +22,9 @@ function get_all_products($limit = 0)
     $price = number_format($row['product_price'], 0, ',', '.');
     echo "
         <div class='box'>
-            <img src='./admin_area/product_images/$img' alt='$title'/>
+            <img src='./admin_area/product_images/$img' alt='".htmlspecialchars($title, ENT_QUOTES)."'/>
             <div class='box-content'>
-                <h3>$title</h3>
+                <h3>".htmlspecialchars($title, ENT_QUOTES)."</h3>
                 <p>$price ₫</p>
                 <div style='display:flex;gap:10px;'>
                     <a href='display_all.php?add_to_cart=$id' class='btn-cart'>Thêm vào giỏ hàng</a>
@@ -34,10 +35,15 @@ function get_all_products($limit = 0)
   }
 }
 
+
 function get_unique_categories()
 {
   global $con;
-  $cat_id = $_GET['category'];
+  $cat_id = isset($_GET['category']) ? (int)$_GET['category'] : 0;
+  if ($cat_id <= 0) {
+    echo "<h2>Danh mục không hợp lệ</h2>";
+    return;
+  }
   $res = mysqli_query($con, "SELECT * FROM products WHERE category_id=$cat_id AND status='true'");
   if (mysqli_num_rows($res) == 0) {
     echo "<h2>Danh mục trống</h2>";
@@ -129,23 +135,36 @@ function cart()
   if (isset($_GET['add_to_cart'])) {
     global $con;
     $ip = getIPAddress();
-    $prod_id = $_GET['add_to_cart'];
+    $prod_id = (int)$_GET['add_to_cart']; // cast int để an toàn
 
     // Kiểm tra sản phẩm đã có trong giỏ hàng chưa
-    $check = mysqli_query($con, "SELECT * FROM cart_details WHERE ip_address='$ip' AND product_id=$prod_id");
+    $check = mysqli_query($con, "SELECT * FROM cart_details WHERE ip_address='".mysqli_real_escape_string($con,$ip)."' AND product_id=$prod_id");
     if (mysqli_num_rows($check) > 0) {
       // Nếu có rồi, cộng thêm 1 vào quantity
-      mysqli_query($con, "UPDATE cart_details SET quantity = quantity + 1 WHERE ip_address='$ip' AND product_id=$prod_id");
+      mysqli_query($con, "UPDATE cart_details SET quantity = quantity + 1 WHERE ip_address='".mysqli_real_escape_string($con,$ip)."' AND product_id=$prod_id");
     } else {
       // Nếu chưa có, thêm mới
-      mysqli_query($con, "INSERT INTO cart_details(product_id, ip_address, quantity) VALUES($prod_id,'$ip',1)");
+      mysqli_query($con, "INSERT INTO cart_details(product_id, ip_address, quantity) VALUES($prod_id,'".mysqli_real_escape_string($con,$ip)."',1)");
     }
 
-    // Reload lại trang hiện tại
-    header("Location: " . $_SERVER['PHP_SELF']);
+    // Redirect về trang hiện tại — giữ nguyên query string (nếu có)
+    $redirect_to = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : 'display_all.php');
+    // Nếu REQUEST_URI chứa add_to_cart param, ta xóa param add_to_cart để tránh loop
+    $url_parts = parse_url($redirect_to);
+    $qs = '';
+    if (isset($url_parts['query'])) {
+      parse_str($url_parts['query'], $query_array);
+      // loại bỏ add_to_cart nếu còn
+      unset($query_array['add_to_cart']);
+      $qs = http_build_query($query_array);
+    }
+    $base = isset($url_parts['path']) ? $url_parts['path'] : 'display_all.php';
+    $final = $base . ($qs !== '' ? "?$qs" : '');
+    header("Location: $final");
     exit();
   }
 }
+
 
 
 function cart_item()
