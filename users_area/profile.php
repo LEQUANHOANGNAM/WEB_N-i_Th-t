@@ -17,9 +17,7 @@ $username = $_SESSION['username'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hồ sơ - <?php echo htmlspecialchars($username); ?> | SSS STORE</title>
 
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
@@ -50,8 +48,19 @@ $username = $_SESSION['username'];
             z-index: 1000;
         }
 
-        .logo img {
-            height: 60px;
+        /* Style chung cho Logo dạng CHỮ (Dùng cho cả Header và Body) */
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--main-color);
+            text-decoration: none;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        /* Hiệu ứng khi di chuột vào logo (chỉ áp dụng cho thẻ a) */
+        a.logo:hover {
+            color: #e65c00; 
         }
 
         nav {
@@ -188,9 +197,9 @@ $username = $_SESSION['username'];
 </head>
 
 <body>
-    <!-- Header -->
     <header>
-        <a class="logo" href="../index.php"><img src="../images/R.jpg" alt="Logo"></a>
+        <a class="logo" href="../index.php">SSS STORE</a>
+        
         <nav>
             <a href="../index.php">Trang Chủ</a>
             <a href="../display_all.php">Sản Phẩm</a>
@@ -207,9 +216,7 @@ $username = $_SESSION['username'];
         </div>
     </header>
 
-    <!-- Profile Section -->
     <section class="profile-container">
-        <!-- Sidebar -->
         <aside class="sidebar">
             <?php
             $stmt = $con->prepare("SELECT user_image FROM user_table WHERE username = ?");
@@ -223,15 +230,24 @@ $username = $_SESSION['username'];
             <?php
             $current = isset($_GET['edit_account']) ? 'edit' : (isset($_GET['my_orders']) ? 'orders' : (isset($_GET['delete_account']) ? 'delete' : 'default'));
             ?>
-            <a href="profile.php" class="<?php echo $current == 'default' ? 'active' : ''; ?>"><i class="fa-solid fa-clock"></i> Đơn hàng chờ xử lý</a>
-            <a href="profile.php?edit_account" class="<?php echo $current == 'edit' ? 'active' : ''; ?>"><i class="fa-solid fa-user-gear"></i> Cài đặt tài khoản</a>
-            <a href="profile.php?my_orders" class="<?php echo $current == 'orders' ? 'active' : ''; ?>"><i class="fa-solid fa-box"></i> Đơn hàng của tôi</a>
-            <a href="profile.php?delete_account" class="<?php echo $current == 'delete' ? 'active' : ''; ?>"><i class="fa-solid fa-trash"></i> Xóa tài khoản</a>
+            
+            <a href="profile.php" class="<?php echo $current == 'default' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-house-user"></i> Tổng quan
+            </a>
+            
+            <a href="profile.php?edit_account" class="<?php echo $current == 'edit' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-user-gear"></i> Cài đặt tài khoản
+            </a>
+            <a href="profile.php?my_orders" class="<?php echo $current == 'orders' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-box"></i> Đơn hàng của tôi
+            </a>
+            <a href="profile.php?delete_account" class="<?php echo $current == 'delete' ? 'active' : ''; ?>">
+                <i class="fa-solid fa-trash"></i> Xóa tài khoản
+            </a>
             <hr>
             <a href="logout.php" class="text-danger"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>
         </aside>
 
-        <!-- Main Content -->
         <div class="content">
             <?php
             if (isset($_GET['edit_account'])) {
@@ -241,13 +257,24 @@ $username = $_SESSION['username'];
             } elseif (isset($_GET['delete_account'])) {
                 include('delete_account.php');
             } else {
-                echo "<h3>Xin chào, " . htmlspecialchars($username) . "!</h3><p>Bạn có thể xem và quản lý tài khoản tại đây.</p>";
+                // --- PHẦN TỔNG QUAN ---
+                echo "<div style='text-align: center; padding-top: 50px;'>";
+                echo "<h3 class='text-primary'>Xin chào, " . htmlspecialchars($username) . "!</h3>";
+                echo "<p class='lead'>Chào mừng bạn trở lại SSS STORE.</p>";
+                echo "<p>Bạn có thể quản lý thông tin cá nhân và xem lịch sử đơn hàng từ menu bên trái.</p>";
+                
+                // ĐÃ SỬA: Thay thế ảnh bằng chữ SSS STORE (dùng class logo)
+                echo "<div style='margin-top: 30px;'>";
+                // Tôi để font-size to hơn (3rem) để đẹp hơn ở giữa trang, nhưng vẫn giữ style gốc của class logo
+                echo "<div class='logo' style='font-size: 3rem; cursor: default;'>SSS STORE</div>";
+                echo "</div>";
+                
+                echo "</div>";
             }
             ?>
         </div>
     </section>
 
-    <!-- Footer -->
     <footer id="contact">
         <div>
             <h3>Thông Tin</h3>

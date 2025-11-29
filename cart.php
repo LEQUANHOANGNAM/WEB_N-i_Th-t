@@ -8,6 +8,7 @@ function update_cart() {
     global $con;
     $get_ip_add = getIPAddress();
 
+    // Cập nhật số lượng
     if (isset($_POST['update_cart'])) {
         foreach ($_POST['qty'] as $product_id => $quantity) {
             if ($quantity > 0) {
@@ -18,6 +19,7 @@ function update_cart() {
         echo "<script>window.location='cart.php';</script>";
     }
 
+    // Xóa sản phẩm
     if (isset($_POST['removeitem'])) {
         foreach ($_POST['removeitem'] as $remove_id) {
             $delete_query = "DELETE FROM `cart_details` WHERE product_id=$remove_id AND ip_address='$get_ip_add'";
@@ -26,8 +28,9 @@ function update_cart() {
         echo "<script>window.location='cart.php';</script>";
     }
 
+    // Nút Tiếp tục mua hàng -> Chuyển về trang Sản phẩm (display_all.php)
     if (isset($_POST['continue_shopping'])) {
-        echo "<script>window.location='index.php';</script>";
+        echo "<script>window.location='display_all.php';</script>";
     }
 }
 update_cart();
@@ -95,7 +98,6 @@ update_cart();
 
         nav a:hover {
             color: var(--main-color);
-            text-decoration: none;
         }
 
         .icons {
@@ -188,7 +190,10 @@ update_cart();
             padding: 8px 16px;
             border-radius: 6px;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
             transition: var(--transition);
+            font-size: 14px;
         }
 
         .btn:hover {
@@ -199,16 +204,13 @@ update_cart();
             background-color: #dc3545;
         }
 
-        .bg-danger:hover {
-            opacity: 0.8;
-        }
-
         .d-flex {
             display: flex;
             align-items: center;
             justify-content: space-between;
             margin-top: 30px;
             flex-wrap: wrap;
+            gap: 15px;
         }
 
         .text-info {
@@ -239,7 +241,11 @@ update_cart();
                 margin: 2rem 1rem;
                 padding: 20px;
             }
-
+            .d-flex {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
             .footer {
                 flex-direction: column;
                 text-align: center;
@@ -249,7 +255,6 @@ update_cart();
 </head>
 
 <body>
-    <!-- HEADER -->
     <header>
         <a class="logo" href="index.php"><img src="./images/R.jpg" alt="Logo"></a>
         <nav>
@@ -259,7 +264,8 @@ update_cart();
             <a href="#contact">Liên Hệ</a>
         </nav>
         <div class="icons">
-            <a href="cart.php">🛒 <sup><?php cart_item(); ?></sup></a>
+            <a href="display_all.php">🛒 <sup><?php cart_item(); ?></sup></a>
+            
             <form action="search_product.php" method="get">
                 <input type="search" placeholder="Tìm kiếm" name="search_data" />
                 <input type="submit" value="Tìm" name="search_data_product" />
@@ -268,7 +274,6 @@ update_cart();
         </div>
     </header>
 
-    <!-- MAIN CART -->
     <div class="container">
         <h2>Giỏ hàng của bạn</h2>
         <form action="" method="post">
@@ -336,7 +341,6 @@ update_cart();
         </form>
     </div>
 
-    <!-- FOOTER -->
     <footer class="footer" id="contact">
         <div>
             <h3>Thông Tin</h3>

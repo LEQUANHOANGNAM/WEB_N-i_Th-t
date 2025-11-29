@@ -1,4 +1,3 @@
-<!-- connect file -->
 <?php
 include('includes/connect.php');
 include('functions/common_function.php');
@@ -11,34 +10,58 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MongLinhStore</title>
+    <title>Tìm Kiếm Sản Phẩm - SSS STORE</title>
 
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 0;
+        :root {
+            --main-color: #ff6600;
+            --bg-light: #f9f9f9;
+            --dark-text: #333;
+            --border-radius: 10px;
+            --transition: 0.3s ease;
         }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* HEADER (Giữ nguyên style header của bạn hoặc đồng bộ) */
         .header {
-            background-color: #ce962e;
+            background-color: #fff;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 1rem 3%;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .header .logo {
             font-size: 1.8rem;
             font-weight: bold;
-            color: white;
-            text-decoration: none;
+            color: #333; /* Đổi màu logo cho nổi trên nền trắng */
         }
+        
+        .header .logo img { height: 60px; } /* Nếu có ảnh logo */
 
         .navbar {
             display: flex;
@@ -46,152 +69,180 @@ session_start();
         }
 
         .navbar a {
-            color: white;
-            font-weight: 500;
-            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 600;
             padding: 8px 15px;
             border-radius: 5px;
-            transition: background 0.3s ease;
+            transition: var(--transition);
         }
 
         .navbar a:hover {
-            background-color: #a8721a;
+            color: var(--main-color);
         }
 
         .icons {
             display: flex;
             align-items: center;
-            gap: 1.2rem;
+            gap: 1rem;
         }
 
-        .icons a {
-            color: white;
-            font-size: 1.2rem;
-            text-decoration: none;
-            position: relative;
+        .search-form {
+            display: flex;
         }
 
         .search-form input[type="search"] {
-            padding: 6px 10px;
-            border: none;
-            border-radius: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ccc;
+            border-radius: var(--border-radius) 0 0 var(--border-radius);
+            outline: none;
         }
 
         .search-form input[type="submit"] {
-            padding: 6px 12px;
-            background-color: #a8721a;
+            padding: 5px 15px;
+            background-color: var(--main-color);
             border: none;
             color: white;
-            border-radius: 5px;
+            border-radius: 0 var(--border-radius) var(--border-radius) 0;
             cursor: pointer;
-            margin-left: 5px;
         }
 
+        /* LAYOUT CHÍNH */
         .main-content {
             display: flex;
-            padding: 20px 3%;
+            padding: 3rem 5%;
+            gap: 2rem;
         }
 
+        /* CSS CHO PHẦN SẢN PHẨM (QUAN TRỌNG: Đã thêm style cho .box) */
         .products-section {
-            width: 75%;
-            padding-right: 20px;
+            flex: 3; /* Chiếm 3 phần */
+        }
+        
+        .products-section h1 {
+            font-size: 2rem; 
+            margin-bottom: 1.5rem;
         }
 
-        .products-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
+        /* Grid layout cho sản phẩm */
+        .box-container { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 2rem; 
         }
 
-        .products-grid > div {
-            flex: 1 1 calc(33.33% - 20px);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            background-color: #fff;
+        /* Style cho từng thẻ sản phẩm */
+        .box { 
+            background: white; 
+            border-radius: var(--border-radius); 
+            overflow: hidden; 
+            box-shadow: 0 0 15px rgba(0,0,0,0.05); 
+            transition: transform var(--transition); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
         }
+        
+        .box:hover { 
+            transform: translateY(-5px); 
+        }
+        
+        /* Style ảnh sản phẩm để không bị vỡ */
+        .box img { 
+            width: 100%; 
+            height: 200px; 
+            object-fit: cover; 
+        }
+        
+        .box-content { 
+            padding: 1rem; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 10px; 
+        }
+        
+        .box-content h3 { 
+            font-size: 1.2rem; 
+            height: 3rem; 
+            overflow: hidden; 
+        }
+        
+        .box-content p { 
+            color: var(--main-color); 
+            font-weight: bold; 
+        }
+        
+        .box-content a, .box-content input[type="submit"] { 
+            padding: 8px 16px; 
+            border-radius: var(--border-radius); 
+            cursor: pointer; 
+            border: none; 
+            text-align: center; 
+            display: inline-block; 
+            font-size: 0.9rem;
+        }
+        
+        .btn-cart { background-color: #28a745; color: white; }
+        .btn-detail { background-color: #007bff; color: white; text-decoration: none; }
 
+
+        /* SIDEBAR (Đã áp dụng fix lỗi click) */
         .sidebar {
-            width: 25%;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            flex: 1; /* Chiếm 1 phần */
+            min-width: 220px;
+            background: #fff;
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            height: fit-content;
         }
 
-        .sidebar-header {
-            background-color: #ce962e;
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            border-radius: 5px;
-            margin-bottom: 15px;
+        .sidebar h3 {
+            margin-bottom: 1rem;
+            color: var(--main-color);
+            font-size: 1.3rem;
+            margin-top: 1rem;
         }
+        .sidebar h3:first-child { margin-top: 0; }
 
-        .categories li,
-        .brands li {
+        .sidebar ul {
             list-style: none;
-            background-color: #6c757d;
-            color: white;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            text-align: center;
-            transition: all 0.3s ease;
         }
 
-        .categories li:hover,
-        .brands li:hover {
-            background-color: #495057;
+        .sidebar ul li {
+            margin-bottom: 5px;
         }
 
-        .categories li a,
-        .brands li a {
-            color: white;
-            text-decoration: none;
+        /* Style thẻ a trong sidebar */
+        .sidebar ul li a {
             display: block;
+            padding: 8px 10px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+            color: var(--dark-text);
+            background: transparent;
         }
 
-        .credit {
+        .sidebar ul li a:hover {
+            background: var(--main-color);
+            color: white;
+        }
+
+        /* FOOTER */
+        .footer {
+            background: #222;
+            color: white;
+            padding: 2rem 5%;
             display: flex;
             justify-content: space-between;
-            background-color: #333;
-            color: white;
-            padding: 20px 3%;
             flex-wrap: wrap;
-        }
-
-        .credit h3 {
-            margin-top: 0;
-        }
-
-        .credit-left,
-        .credit-right {
-            width: 48%;
+            margin-top: 3rem;
         }
 
         @media (max-width: 768px) {
             .main-content {
                 flex-direction: column;
             }
-
-            .products-section,
             .sidebar {
-                width: 100%;
-            }
-
-            .products-grid > div {
-                flex: 1 1 100%;
-            }
-
-            .credit {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .credit-left,
-            .credit-right {
                 width: 100%;
             }
         }
@@ -199,9 +250,8 @@ session_start();
 </head>
 
 <body>
-    <!-- Header -->
     <section class="header">
-        <a href="index.php" class="logo">SSS STore</a>
+        <a href="index.php" class="logo">SSS STORE</a>
         <nav class="navbar">
             <a href="index.php">Trang Chủ</a>
             <a href="display_all.php">Sản Phẩm</a>
@@ -219,7 +269,7 @@ session_start();
             <a href="cart.php"> 🛒<sup><?php cart_item();?></sup></a>
             <form class="search-form" action="search_product.php" method="get">
                 <input type="search" name="search_data" placeholder="Tìm kiếm...">
-                <input type="submit" name="search_data_product" value="Tìm Kiếm">
+                <input type="submit" name="search_data_product" value="Tìm">
             </form>
             <?php
                 if(!isset($_SESSION['username'])){
@@ -231,38 +281,36 @@ session_start();
         </div>
     </section>
 
-    <!-- Content -->
     <div class="main-content">
-        <div class="products-section">
-            <div class="products-grid">
-                <?php
-                    search_product();
-                    get_unique_categories();
-                    get_unique_brands();
-                ?>
-            </div>
-        </div>
-
         <div class="sidebar">
-            <ul class="categories">
-                <li class="sidebar-header">Mục Hàng</li>
+            <h3>Danh Mục</h3>
+            <ul>
                 <?php getcategories(); ?>
             </ul>
-            <ul class="brands">
-                <li class="sidebar-header">Thương Hiệu</li>
+            <h3>Thương Hiệu</h3>
+            <ul>
                 <?php getbrands(); ?>
             </ul>
         </div>
+
+        <div class="products-section">
+            <h1>Kết Quả Tìm Kiếm</h1>
+            <div class="box-container">
+                <?php
+                    search_product();
+                ?>
+            </div>
+        </div>
     </div>
 
-    <!-- Footer -->
-    <section class="credit" id="contact">
-        <div class="credit-left">
+    <section class="footer" id="contact">
+        <div>
             <h3>Thông Tin Liên Hệ</h3>
-            <p>Email: 2251120308 ( Nam )</p>
+            <p>Email: 2251120308@ut.edu.vn</p>
+            <p>Địa chỉ: 70 Tô Ký, P. Tân Chánh Hiệp, Q12, TP.HCM</p>
         </div>
-        <div class="credit-right">
-            <p>&copy; 2024 SSS STORE</p>
+        <div>
+            <p>&copy; 2025 SSS STORE</p>
         </div>
     </section>
 </body>
