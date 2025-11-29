@@ -1,4 +1,3 @@
-<!-- connect file -->
 <?php
 include('../includes/connect.php');
 include('../functions/common_function.php');
@@ -12,11 +11,8 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="../style.css">
     <style>
         body {
@@ -83,7 +79,6 @@ session_start();
 </head>
 
 <body>
-    <!-- Sidebar -->
     <div class="sidebar d-flex flex-column align-items-center py-4">
         <img src="../images/R.jpg" alt="Admin" class="admin_image">
         <div class="admin-name">
@@ -103,9 +98,7 @@ session_start();
         </nav>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
-        <!-- Top Navbar -->
         <nav class="navbar navbar-expand-lg">
             <div class="container-fluid justify-content-between">
                 <h4 class="fw-bold text-primary">Admin Dashboard</h4>
@@ -115,7 +108,6 @@ session_start();
             </div>
         </nav>
 
-        <!-- Page Content -->
         <div class="my-4">
             <?php 
             if(isset($_GET['insert_category'])) include('insert_categories.php');
@@ -132,6 +124,11 @@ session_start();
             if(isset($_GET['delete_brands'])) include('delete_brands.php');
             if(isset($_GET['list_orders'])) include('list_orders.php');
             if(isset($_GET['delete_orders'])) include('delete_orders.php');
+            
+            // --- ĐOẠN CODE MỚI THÊM ĐỂ XÁC NHẬN ĐƠN HÀNG ---
+            if(isset($_GET['confirm_order'])) include('confirm_order.php');
+            // -----------------------------------------------
+
             if(isset($_GET['list_payments'])) include('list_payments.php');
             if(isset($_GET['delete_payments'])) include('delete_payments.php');
             if(isset($_GET['list_users'])) include('list_users.php');
@@ -139,12 +136,10 @@ session_start();
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="footer">
         <?php include("../includes/footer.php"); ?>
     </div>
 
-    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
